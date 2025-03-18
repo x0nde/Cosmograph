@@ -13,18 +13,16 @@ class CosmographView extends WatchUi.WatchFace {
     var innerRadius = 0;
     var rotationOffset = Math.PI / 2.0; // Make 0 the top value instead of pi/2.
 
-    var hasVectorFont = false;
-    var font20 = null;
-    var font20Height = 0;
-    var xtinyFont = null;
-
     var backgroundColor = null;
     var palette1 = null;
+    var palette1alt = null;
     var palette1dark = null;
     var palette1darker = null;
     var palette1light = null;
     var palette2 = null;
     var palette2dark = null;
+
+    var faceImage = null;
 
     function initialize() {
         WatchFace.initialize();
@@ -40,16 +38,12 @@ class CosmographView extends WatchUi.WatchFace {
         if (centerX <= centerY) { // Math.min
             radius = centerX;
         }
-        innerRadius = radius * 0.75;
 
-        if (Graphics has :getVectorFont) {
-            hasVectorFont = true;
-            font20 = Graphics.getVectorFont({:face=>["RobotoRegular"], :size=>20});
-            font20Height = dc.getFontHeight(font20);
-        } else {
-            hasVectorFont = false;
+        if (width <= 400) {
+            faceImage = Application.loadResource(Rez.Drawables.face386);
+        } else if (width <= 460) {
+            faceImage = Application.loadResource(Rez.Drawables.face450);
         }
-        xtinyFont = Graphics.FONT_XTINY;
         setColors();
     }
 
@@ -66,6 +60,7 @@ class CosmographView extends WatchUi.WatchFace {
         if (dc has :setAntiAlias ) { dc.setAntiAlias(true); }
         drawClockFace(dc);
         drawHands(dc);
+        drawProgressBars(dc);
     }
 
     // Called when this View is removed from the screen. Save the
@@ -84,44 +79,7 @@ class CosmographView extends WatchUi.WatchFace {
 
     /* -------- AUX FUNCTIONS -------- */
     function drawClockFace(dc) as Void {
-        // Draw 60 ticks
-        var tickLength = radius * 0.07;
-        var tickWidth = 2; // Default tick width
-        for (var i = 0; i < 60; i++) {
-            var angle = i * Math.PI / 30.0 - rotationOffset; // Convert tick number to radians with 90 dregrees rotation
-            
-            if (hasVectorFont && (i == 29 || i == 30 || i ==  31)) { // Skip these for making room.
-                continue;
-            } else if (hasVectorFont && i % 5 == 0) { // Draw numbers at 5, 15, 25, 35, 45, 55.
-                var number = i;
-                var text = number.format("%02d");
-                if (i == 0) {
-                    text = "60";
-                }
-                dc.setColor(palette1, Graphics.COLOR_TRANSPARENT);
-                if (i == 20 || i == 25 || i == 35 || i == 40) {
-                    dc.drawRadialText(centerX, centerY, font20, text, Graphics.TEXT_JUSTIFY_CENTER, radiansToDegrees(angle + 2*Math.PI), radius - 4, 1);
-                } else {
-                    dc.drawRadialText(centerX, centerY, font20, text, Graphics.TEXT_JUSTIFY_CENTER, radiansToDegrees(angle + 2*Math.PI), radius - font20Height + 4, 0);
-                }
-            } else {
-                var startX = centerX + (radius * Math.cos(angle));
-                var startY = centerY + (radius * Math.sin(angle));
-                var endX = centerX + ((radius - tickLength) * Math.cos(angle));
-                var endY = centerY + ((radius - tickLength) * Math.sin(angle));
-
-                dc.setPenWidth(tickWidth);
-                dc.setColor(palette1, Graphics.COLOR_TRANSPARENT);
-                dc.drawLine(startX, startY, endX, endY);
-            }
-        }
-        
-        if (hasVectorFont) {
-            // Text at the bottom.
-            dc.setColor(palette1, Graphics.COLOR_TRANSPARENT);
-            dc.setPenWidth(3);
-            dc.drawText(centerX, height - font20Height - 1, font20, "swiss", Graphics.TEXT_JUSTIFY_CENTER);
-        }
+        dc.drawBitmap(0, 0, faceImage);
     }
 
 
@@ -136,26 +94,26 @@ class CosmographView extends WatchUi.WatchFace {
         var minuteAngle = minutes * Math.PI / 30.0;
         var secondAngle = seconds * Math.PI / 30.0;
 
-        // Draw center dot
-        dc.setColor(palette1dark, Graphics.COLOR_TRANSPARENT);
-        dc.fillCircle(centerX, centerY, 10);
-
         // Draw hour hand
-        drawHand(dc, hourAngle, radius * 0.6, radius * 0.08, 12, palette1dark);
-        drawHand(dc, hourAngle, radius * 0.9, radius * 0.1, 6, backgroundColor);
-        drawHand(dc, hourAngle, radius * 0.5, radius * 0.08, 12, palette1dark);
-        drawHand(dc, hourAngle, radius * 0.3, radius * 0.1, 6, backgroundColor);
-        // Draw minute hand
-        drawHand(dc, minuteAngle, radius * 0.8, radius * 0.08, 10, palette1dark);
-        drawHand(dc, minuteAngle, radius * 0.9, radius * 0.1, 4, backgroundColor);
-        drawHand(dc, minuteAngle, radius * 0.6, radius * 0.08, 10, palette1dark);
-        drawHand(dc, minuteAngle, radius * 0.3, radius * 0.1, 4, backgroundColor);
-        // Draw second hand
-        drawHand(dc, secondAngle, radius * 0.87, radius * 0.13, 3, palette1light);
+        dc.setColor(palette1, Graphics.COLOR_TRANSPARENT);
+        dc.fillCircle(centerX, centerY, 12);
+        drawHand(dc, hourAngle, radius * 0.5, radius * 0.1, 12, palette1);
+        drawHand(dc, hourAngle, radius * 0.4, radius * 0.07, 6, backgroundColor);
+        drawHand(dc, hourAngle, radius * 0.08, 0, 12, palette1);
 
-        // Small red circle colors.
+        // Draw minute hand
+        dc.setColor(palette1alt, Graphics.COLOR_TRANSPARENT);
+        dc.fillCircle(centerX, centerY, 9);
+        drawHand(dc, minuteAngle, radius * 0.6, radius * 0.1, 10, palette1alt);
+        drawHand(dc, minuteAngle, radius * 0.56, radius * 0.07, 4, backgroundColor);
+        drawHand(dc, minuteAngle, radius * 0.08, 0, 10, palette1alt);
+        
+        // Draw second hand
         dc.setColor(palette1light, Graphics.COLOR_TRANSPARENT);
         dc.fillCircle(centerX, centerY, 5);
+        drawHand(dc, secondAngle, radius * 0.85, radius * 0.16, 3, palette1light);
+
+        // Small red circle colors.
         dc.setColor(palette1dark, Graphics.COLOR_TRANSPARENT);
         dc.fillCircle(centerX, centerY, 1);
     }
@@ -170,6 +128,26 @@ class CosmographView extends WatchUi.WatchFace {
         var conterWeightEndX = centerX + (conterWeightLen * Math.cos(angle - rotationOffset  - Math.PI));
         var conterWeightEndY = centerY + (conterWeightLen * Math.sin(angle - rotationOffset  - Math.PI));
         dc.drawLine(centerX, centerY, conterWeightEndX, conterWeightEndY);
+    }
+
+    function drawProgressBars(dc) as Void {
+        var offSet = radius * 0.3;
+        var coord = [
+            [centerX, centerY + offSet],
+            [centerX - offSet, centerY],
+            [centerX + offSet, centerY]
+        ];
+
+        // Draw the progress bars
+        drawProgressBar(dc, coord[0][0], coord[0][1], 0, 100, 60);
+        // drawProgressBar(dc, angles[0][0], angles[0][1], metricForProgressBar(leftBarMetric));
+        // drawProgressBar(dc, angles[1][0], angles[1][1], metricForProgressBar(topBarMetric));
+        // drawProgressBar(dc, angles[2][0], angles[2][1], metricForProgressBar(rightBarMetric));
+    }
+
+    function drawProgressBar(dc, x, y, max, min, value) {
+        dc.setColor(palette1, Graphics.COLOR_TRANSPARENT);
+        dc.fillCircle(x, y, 9);
     }
     
     /* -------- STATIC FUNCTIONS -------- */
@@ -188,7 +166,8 @@ class CosmographView extends WatchUi.WatchFace {
         palette2dark = Graphics.COLOR_DK_RED;
        
         // White.
-        palette1 = Graphics.COLOR_WHITE;
+        palette1 = Graphics.createColor(255, 225, 225, 225);
+        palette1alt = Graphics.createColor(255, 195, 195, 195);
         palette1dark = Graphics.createColor(255, 155, 155, 155);
         palette1darker = Graphics.createColor(255, 55, 55, 55);
         palette1light = Graphics.COLOR_WHITE;

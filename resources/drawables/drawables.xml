@@ -1,3 +1,5 @@
 <drawables>
     <bitmap id="LauncherIcon" filename="launcher_icon.png" />
+    <bitmap id="face450" filename="face450.png" />
+    <bitmap id="face386" filename="face386.png" />
 </drawables>
