@@ -22,6 +22,7 @@ class CosmographView extends WatchUi.WatchFace {
     var palette2 = null;
     var palette2dark = null;
 
+    var isSmallScreen = null;
     var faceImage = null;
 
     function initialize() {
@@ -40,8 +41,10 @@ class CosmographView extends WatchUi.WatchFace {
         }
 
         if (width <= 400) {
+            isSmallScreen = true;
             faceImage = Application.loadResource(Rez.Drawables.face386);
         } else if (width <= 460) {
+            isSmallScreen = false;
             faceImage = Application.loadResource(Rez.Drawables.face450);
         }
         setColors();
@@ -59,8 +62,10 @@ class CosmographView extends WatchUi.WatchFace {
         dc.clear();
         if (dc has :setAntiAlias ) { dc.setAntiAlias(true); }
         drawClockFace(dc);
-        drawHands(dc);
+        
         drawProgressBars(dc);
+
+        drawHands(dc);
     }
 
     // Called when this View is removed from the screen. Save the
@@ -113,7 +118,7 @@ class CosmographView extends WatchUi.WatchFace {
         dc.fillCircle(centerX, centerY, 5);
         drawHand(dc, secondAngle, radius * 0.85, radius * 0.16, 3, palette1light);
 
-        // Small red circle colors.
+        // Small dark circle on top of needle.
         dc.setColor(palette1dark, Graphics.COLOR_TRANSPARENT);
         dc.fillCircle(centerX, centerY, 1);
     }
@@ -131,34 +136,59 @@ class CosmographView extends WatchUi.WatchFace {
     }
 
     function drawProgressBars(dc) as Void {
-        var offSet = radius * 0.3;
+        var radiusOffSet = radius * 0.4;
+        var xOffSet = 3;
+        var yOffSet = isSmallScreen ? 9 : 13;
         var coord = [
-            [centerX, centerY + offSet],
-            [centerX - offSet, centerY],
-            [centerX + offSet, centerY]
+            [centerX - xOffSet, centerY + radiusOffSet],
+            [centerX - xOffSet - radiusOffSet, centerY - yOffSet],
+            [centerX - xOffSet + radiusOffSet, centerY - yOffSet]
         ];
 
         // Draw the progress bars
-        drawProgressBar(dc, coord[0][0], coord[0][1], 0, 100, 60);
-        // drawProgressBar(dc, angles[0][0], angles[0][1], metricForProgressBar(leftBarMetric));
-        // drawProgressBar(dc, angles[1][0], angles[1][1], metricForProgressBar(topBarMetric));
-        // drawProgressBar(dc, angles[2][0], angles[2][1], metricForProgressBar(rightBarMetric));
+        drawProgressBar(dc, coord[0][0], coord[0][1], 0, 100, 34);
+        drawProgressBar(dc, coord[1][0], coord[1][1], 0, 100, 75);
+        drawProgressBar(dc, coord[2][0], coord[2][1], 0, 100, 50);
     }
 
     function drawProgressBar(dc, x, y, max, min, value) {
-        dc.setColor(palette1, Graphics.COLOR_TRANSPARENT);
-        dc.fillCircle(x, y, 9);
+        var outerCircleSize = isSmallScreen ? 53 : 63;
+        var innerCircleSize = isSmallScreen ? 37 : 53;
+        var needleLength = isSmallScreen ? 47 : 57;
+        var counterNeedleLength = isSmallScreen ? 10 : 10;
+        var useAltColor = true;
+        var needleColor = useAltColor ? palette1light : palette2;
+
+        dc.setColor(palette1alt, Graphics.COLOR_TRANSPARENT);
+        dc.fillCircle(x, y, outerCircleSize);
+        dc.setColor(backgroundColor, Graphics.COLOR_TRANSPARENT);
+        dc.fillCircle(x, y, innerCircleSize);
+
+        // Calculate the angle
+        var range = max - min;
+        var relativeValue = value - min;
+        var percentage = relativeValue.toFloat() / range.toFloat();
+        var angle = Math.toRadians(270 - (percentage * 360)); // Start at 12 o'clock, clockwise
+
+        // Calculate the needle endpoint
+        var needleEndX = x + needleLength * Math.cos(angle);
+        var needleEndY = y + needleLength * Math.sin(angle);
+        
+        var counterNeedleEndX = x + (counterNeedleLength) * Math.cos(angle - Math.PI);
+        var counterNeedleEndY = y + (counterNeedleLength) * Math.sin(angle - Math.PI);
+
+        // Draw the needle
+        dc.setColor(needleColor, Graphics.COLOR_TRANSPARENT);
+        dc.setPenWidth(3);
+        dc.drawLine(x, y, needleEndX, needleEndY);
+        dc.setPenWidth(3);
+        dc.drawLine(x, y, counterNeedleEndX, counterNeedleEndY);
+        dc.fillCircle(x, y, 3);
+        dc.setColor(palette1dark, Graphics.COLOR_TRANSPARENT);
+        dc.fillCircle(x, y, 1);
     }
     
     /* -------- STATIC FUNCTIONS -------- */
-    function radiansToDegrees(angle) { // take a radian and return a degree.
-        return angle * 180.0 / Math.PI * -1; // * -1 because garmin is inverted for some reason.
-    }
-
-    function degreesToRadians(angle) { // take a degree and return a radian.
-        return angle * Math.PI / 180.0 * -1;
-    }
-
     function setColors() as Void {
         backgroundColor = Graphics.COLOR_BLACK;
         
