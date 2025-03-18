@@ -23,12 +23,7 @@ class CosmographView extends WatchUi.WatchFace {
     var color2w1 = null;
     var color2w10 = null;
 
-    var ledFont = null;
-    var ledFontSmall = null;
-    var ledFontSmallLines = null;
     var ledFontBig = null;
-    var ledFontSmol = null;
-    var ledFontXSmol = null;
     var ledFontStorre = null;
 
     var isSmallScreen = null;
@@ -69,12 +64,7 @@ class CosmographView extends WatchUi.WatchFace {
             small3 = Application.loadResource(Rez.Drawables.small_3);
         }
 
-        ledFont = Application.loadResource( Rez.Fonts.id_led );
-        ledFontSmall = Application.loadResource( Rez.Fonts.id_led_small );
-        ledFontSmallLines = Application.loadResource( Rez.Fonts.id_led_small_lines );
         ledFontBig = Application.loadResource( Rez.Fonts.id_led_big );
-        ledFontSmol = Application.loadResource( Rez.Fonts.id_smol );
-        ledFontXSmol = Application.loadResource( Rez.Fonts.id_xsmol );
         ledFontStorre = Application.loadResource( Rez.Fonts.id_storre );
 
         setColors();
