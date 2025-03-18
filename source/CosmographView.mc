@@ -18,7 +18,9 @@ class CosmographView extends WatchUi.WatchFace {
 
     var backgroundColor = null;
     var color1w0 = null;
+    var color1w1 = null;
     var color1w2 = null;
+    var color1w3 = null;
     var color1w5 = null;
     var color1w6 = null;
     var color1w7 = null;
@@ -57,6 +59,7 @@ class CosmographView extends WatchUi.WatchFace {
     var metricD = null;
     var metricL = null;
     var showSecondHand = null;
+    var removeCrown = null;
     var backgroundColorPref = null;
     var color1 = null;
     var color2 = null;
@@ -64,6 +67,8 @@ class CosmographView extends WatchUi.WatchFace {
     var color4 = null;
     var color5 = null;
     var color6 = null;
+    var color7 = null;
+    var color8 = null;
 
     function initialize() {
         WatchFace.initialize();
@@ -82,10 +87,8 @@ class CosmographView extends WatchUi.WatchFace {
 
         if (width <= 400) {
             isSmallScreen = true;
-            faceImage = Application.loadResource(Rez.Drawables.face386);
         } else if (width <= 460) {
             isSmallScreen = false;
-            faceImage = Application.loadResource(Rez.Drawables.face450);
         }
         small0 = Application.loadResource(Rez.Drawables.small_0);
         small1 = Application.loadResource(Rez.Drawables.small_1);
@@ -289,11 +292,11 @@ class CosmographView extends WatchUi.WatchFace {
         dc.drawText(x, y, ledFontBig, "####", Graphics.TEXT_JUSTIFY_CENTER);
 
         // Values.
-        dc.setColor(color1w0, Graphics.COLOR_TRANSPARENT);
+        dc.setColor(color1w1, Graphics.COLOR_TRANSPARENT);
         dc.drawText(x+2*charSize, y, ledFontBig, getMetricUValue(), Graphics.TEXT_JUSTIFY_RIGHT);
 
         // Text.
-        dc.setColor(color1w2, Graphics.COLOR_TRANSPARENT);
+        dc.setColor(color1w3, Graphics.COLOR_TRANSPARENT);
         dc.drawText(x, y-13, ledFontStorre, getMetricUText(), Graphics.TEXT_JUSTIFY_CENTER);
     }
 
@@ -352,6 +355,47 @@ class CosmographView extends WatchUi.WatchFace {
         color1w6 = Graphics.createColor(255, 170, 170, 170);
         color1w7 = Graphics.createColor(255, 155, 155, 155);
         color1w10 = Graphics.createColor(255, 55, 55, 55);
+
+        color1w1 = color1w0;
+        color1w3 = color1w2;
+
+        var color = null;
+        color = getColorFromString(backgroundColorPref);
+        if (color != null) {
+            backgroundColor = color;
+        }
+        color = getColorFromString(color1);
+        if (color != null) {
+            color1w0 = color;
+        }
+        color = getColorFromString(color2);
+        if (color != null) {
+            color1w2 = color;
+        }
+        color = getColorFromString(color3);
+        if (color != null) {
+            color1w5 = color;
+        }
+        color = getColorFromString(color4);
+        if (color != null) {
+            color1w6 = color;
+        }
+        color = getColorFromString(color5);
+        if (color != null) {
+            color1w7 = color;
+        }
+        color = getColorFromString(color6);
+        if (color != null) {
+            color1w10 = color;
+        }
+        color = getColorFromString(color7);
+        if (color != null) {
+            color1w1 = color;
+        }
+        color = getColorFromString(color8);
+        if (color != null) {
+            color1w3 = color;
+        }
     }
     
     function cacheProps() as Void {
@@ -360,6 +404,7 @@ class CosmographView extends WatchUi.WatchFace {
         metricD = Application.Properties.getValue("metricD");
         metricL = Application.Properties.getValue("metricL");
         showSecondHand = Application.Properties.getValue("showSecondHand");
+        removeCrown = Application.Properties.getValue("removeCrown");
         backgroundColorPref = Application.Properties.getValue("backgroundColor");
         color1 = Application.Properties.getValue("color1");
         color2 = Application.Properties.getValue("color2");
@@ -367,6 +412,23 @@ class CosmographView extends WatchUi.WatchFace {
         color4 = Application.Properties.getValue("color4");
         color5 = Application.Properties.getValue("color5");
         color6 = Application.Properties.getValue("color6");
+        color7 = Application.Properties.getValue("color7");
+        color8 = Application.Properties.getValue("color8");
+
+        if (removeCrown) {
+            if (isSmallScreen) {
+                faceImage = Application.loadResource(Rez.Drawables.face386alt);
+            } else {
+                faceImage = Application.loadResource(Rez.Drawables.face450alt);
+            }
+        } else {
+            if (isSmallScreen) {
+                faceImage = Application.loadResource(Rez.Drawables.face386);
+            } else {
+                faceImage = Application.loadResource(Rez.Drawables.face450);
+            }
+        }
+
     }
     
     function day_name(day_of_week) {
@@ -463,5 +525,37 @@ class CosmographView extends WatchUi.WatchFace {
             return 100;
         }
         return 100;
+    }
+
+    function getColorFromString(color) {
+        if (color == null || color.length() == null || color.length() <= 5 || color == "") {
+            return null;
+        }
+
+        var i = color.find(",");
+        if (i == null) {
+            return null;
+        }
+
+        var j = color.substring(i+1, color.length());
+        if (j == null) {
+            return null;
+        }
+        j = j.find(",");
+        if (j == null) {
+            return null;
+        }
+        j = i + 1 + j;
+
+        // Parse the components
+        var red = color.substring(0, i).toNumber();
+        var green = color.substring(i+1, j).toNumber();
+        var blue = color.substring(j+1, color.length()).toNumber();
+
+        if (red == null || green == null || blue == null) {
+            return null;
+        }
+
+        return Graphics.createColor(255, red, green, blue);
     }
 }

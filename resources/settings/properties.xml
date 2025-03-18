@@ -4,6 +4,7 @@
     <property id="metricD" type="number">1</property>
     <property id="metricL" type="number">2</property>
     <property id="showSecondHand" type="boolean">true</property>
+    <property id="removeCrown" type="boolean">false</property>
     <property id="backgroundColor" type="string"></property>
     <property id="color1" type="string"></property>
     <property id="color2" type="string"></property>
@@ -11,4 +12,6 @@
     <property id="color4" type="string"></property>
     <property id="color5" type="string"></property>
     <property id="color6" type="string"></property>
+    <property id="color7" type="string"></property>
+    <property id="color8" type="string"></property>
 </properties>

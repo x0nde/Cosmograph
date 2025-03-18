@@ -49,36 +49,43 @@
         <settingConfig type="boolean" />
     </setting>
 
-    <setting propertyKey="@Properties.backgroundColor" title="Background Color RGB comma separated (ex: 255,255,255)">
+    <setting propertyKey="@Properties.removeCrown" title="Show crown icon at top">
+        <settingConfig type="boolean" />
+    </setting>
+
+    <setting propertyKey="@Properties.backgroundColor" title="Background Color RGB (ex: 255,255,255)">
         <settingConfig type="alphaNumeric" />
     </setting>
 
-    <setting propertyKey="@Properties.color1" title="Color 1 RGB comma separated (ex: 255,255,255)">
+    <setting propertyKey="@Properties.color1" title="Second Hand RGB (ex: 255,255,255)">
         <settingConfig type="alphaNumeric" />
     </setting>
 
-
-    <setting propertyKey="@Properties.color2" title="Color 2 RGB comma separated (ex: 255,255,255)">
+    <setting propertyKey="@Properties.color2" title="Hour Hand RGB (ex: 255,255,255)">
         <settingConfig type="alphaNumeric" />
     </setting>
 
-
-    <setting propertyKey="@Properties.color3" title="Color 3 RGB comma separated (ex: 255,255,255)">
+    <setting propertyKey="@Properties.color4" title="Minute Hand 4 RGB (ex: 255,255,255)">
         <settingConfig type="alphaNumeric" />
     </setting>
 
-
-    <setting propertyKey="@Properties.color4" title="Color 4 RGB comma separated (ex: 255,255,255)">
+    <setting propertyKey="@Properties.color3" title="Circles RGB (ex: 255,255,255)">
         <settingConfig type="alphaNumeric" />
     </setting>
 
-
-    <setting propertyKey="@Properties.color5" title="Color 5 RGB comma separated (ex: 255,255,255)">
+    <setting propertyKey="@Properties.color5" title="Second Hand Pin RGB (ex: 255,255,255)">
         <settingConfig type="alphaNumeric" />
     </setting>
 
+    <setting propertyKey="@Properties.color7" title="Metric Display Value RGB (ex: 255,255,255)">
+        <settingConfig type="alphaNumeric" />
+    </setting>
 
-    <setting propertyKey="@Properties.color6" title="Color 6 RGB comma separated (ex: 255,255,255)">
+    <setting propertyKey="@Properties.color8" title="Metric Display Title RGB (ex: 255,255,255)">
+        <settingConfig type="alphaNumeric" />
+    </setting>
+
+    <setting propertyKey="@Properties.color6" title="Metric Display Background RGB (ex: 255,255,255)">
         <settingConfig type="alphaNumeric" />
     </setting>
 
