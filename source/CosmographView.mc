@@ -23,8 +23,20 @@ class CosmographView extends WatchUi.WatchFace {
     var color2w1 = null;
     var color2w10 = null;
 
+    var ledFont = null;
+    var ledFontSmall = null;
+    var ledFontSmallLines = null;
+    var ledFontBig = null;
+    var ledFontSmol = null;
+    var ledFontXSmol = null;
+    var ledFontStorre = null;
+
     var isSmallScreen = null;
     var faceImage = null;
+    var small0 = null;
+    var small1 = null;
+    var small2 = null;
+    var small3 = null;
 
     function initialize() {
         WatchFace.initialize();
@@ -44,10 +56,27 @@ class CosmographView extends WatchUi.WatchFace {
         if (width <= 400) {
             isSmallScreen = true;
             faceImage = Application.loadResource(Rez.Drawables.face386);
+            small0 = Application.loadResource(Rez.Drawables.small_0);
+            small1 = Application.loadResource(Rez.Drawables.small_1);
+            small2 = Application.loadResource(Rez.Drawables.small_2);
+            small3 = Application.loadResource(Rez.Drawables.small_3);
         } else if (width <= 460) {
             isSmallScreen = false;
             faceImage = Application.loadResource(Rez.Drawables.face450);
+            small0 = Application.loadResource(Rez.Drawables.small_0);
+            small1 = Application.loadResource(Rez.Drawables.small_1);
+            small2 = Application.loadResource(Rez.Drawables.small_2);
+            small3 = Application.loadResource(Rez.Drawables.small_3);
         }
+
+        ledFont = Application.loadResource( Rez.Fonts.id_led );
+        ledFontSmall = Application.loadResource( Rez.Fonts.id_led_small );
+        ledFontSmallLines = Application.loadResource( Rez.Fonts.id_led_small_lines );
+        ledFontBig = Application.loadResource( Rez.Fonts.id_led_big );
+        ledFontSmol = Application.loadResource( Rez.Fonts.id_smol );
+        ledFontXSmol = Application.loadResource( Rez.Fonts.id_xsmol );
+        ledFontStorre = Application.loadResource( Rez.Fonts.id_storre );
+
         setColors();
     }
 
@@ -151,14 +180,16 @@ class CosmographView extends WatchUi.WatchFace {
         ];
 
         // Draw the progress bars
-        drawProgressBar(dc, coord[0][0], coord[0][1], 0, 100, 34);
-        drawProgressBar(dc, coord[1][0], coord[1][1], 0, 100, 75);
-        drawProgressBar(dc, coord[2][0], coord[2][1], 0, 100, 50);
+        drawProgressBar(dc, coord[0][0], coord[0][1], 0, 100, 34, 2);
+        drawProgressBar(dc, coord[1][0], coord[1][1], 0, 100, 75, 0);
+        drawProgressBar(dc, coord[2][0], coord[2][1], 0, 100, 50, 3);
     }
 
-    function drawProgressBar(dc, x, y, max, min, value) {
-        var outerCircleSize = isSmallScreen ? 53 : 63;
-        var innerCircleSize = isSmallScreen ? 37 : 53;
+    function drawProgressBar(dc, x, y, max, min, value, type) {
+        // var outerCircleSize = isSmallScreen ? 53 : 63;
+        var outerCircleSize = 53;
+        // var innerCircleSize = isSmallScreen ? 37 : 53;
+        var innerCircleSize = 37;
         var needleLength = isSmallScreen ? 47 : 57;
         var counterNeedleLength = isSmallScreen ? 10 : 10;
         var useAltColor = true;
@@ -168,6 +199,8 @@ class CosmographView extends WatchUi.WatchFace {
         dc.fillCircle(x, y, outerCircleSize);
         dc.setColor(backgroundColor, Graphics.COLOR_TRANSPARENT);
         dc.fillCircle(x, y, innerCircleSize);
+
+        drawMetricFace(dc, x, y, type, outerCircleSize);
 
         // Calculate the angle
         var range = max - min;
@@ -191,6 +224,18 @@ class CosmographView extends WatchUi.WatchFace {
         dc.fillCircle(x, y, 3);
         dc.setColor(color1w7, Graphics.COLOR_TRANSPARENT);
         dc.fillCircle(x, y, 1);
+    }
+
+    function drawMetricFace(dc, x, y, type, radius) {
+        if (type == 0) {
+            dc.drawBitmap(x-radius, y-radius, small0);
+        } else if (type == 1) {
+            dc.drawBitmap(x-radius, y-radius, small1);
+        } else if (type == 2) {
+            dc.drawBitmap(x-radius, y-radius, small2);
+        } else if (type == 3) {
+            dc.drawBitmap(x-radius, y-radius, small3);
+        }
     }
     
     /* -------- STATIC FUNCTIONS -------- */

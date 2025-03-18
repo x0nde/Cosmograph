@@ -2,4 +2,8 @@
     <bitmap id="LauncherIcon" filename="launcher_icon.png" />
     <bitmap id="face450" filename="face450.png" />
     <bitmap id="face386" filename="face386.png" />
+    <bitmap id="small_0" filename="small_0.png" />
+    <bitmap id="small_1" filename="small_1.png" />
+    <bitmap id="small_2" filename="small_2.png" />
+    <bitmap id="small_3" filename="small_3.png" />
 </drawables>
