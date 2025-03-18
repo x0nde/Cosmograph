@@ -4,10 +4,11 @@
         <settingConfig type="list">
             <listEntry value="0">Daily Kilometers</listEntry>
             <listEntry value="1">Daily Calories</listEntry>
-            <listEntry value="3">Heart Rate</listEntry>
-            <listEntry value="4">Battery</listEntry>
-            <listEntry value="5">Battery days</listEntry>
-            <listEntry value="6">Body Battery</listEntry>
+            <listEntry value="2">Heart Rate</listEntry>
+            <listEntry value="3">Battery</listEntry>
+            <listEntry value="4">Battery days</listEntry>
+            <listEntry value="5">Body Battery</listEntry>
+            <listEntry value="6">Week day</listEntry>
         </settingConfig>
     </setting>
 
@@ -18,6 +19,7 @@
             <listEntry value="2">Battery</listEntry>
             <listEntry value="3">Body Battery</listEntry>
             <listEntry value="4">Setp goal</listEntry>
+            <listEntry value="5">Stress</listEntry>
         </settingConfig>
     </setting>
 
@@ -28,6 +30,7 @@
             <listEntry value="2">Battery</listEntry>
             <listEntry value="3">Body Battery</listEntry>
             <listEntry value="4">Setp goal</listEntry>
+            <listEntry value="5">Stress</listEntry>
         </settingConfig>
     </setting>
 
@@ -38,6 +41,7 @@
             <listEntry value="2">Battery</listEntry>
             <listEntry value="3">Body Battery</listEntry>
             <listEntry value="4">Setp goal</listEntry>
+            <listEntry value="5">Stress</listEntry>
         </settingConfig>
     </setting>
 

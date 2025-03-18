@@ -1,8 +1,11 @@
+import Toybox.ActivityMonitor;
+import Toybox.Application;
 import Toybox.Graphics;
 import Toybox.Lang;
+import Toybox.SensorHistory;
 import Toybox.System;
-import Toybox.WatchUi;
 import Toybox.Time;
+import Toybox.WatchUi;
 
 class CosmographView extends WatchUi.WatchFace {
     var width = 0;
@@ -31,8 +34,36 @@ class CosmographView extends WatchUi.WatchFace {
     var small2 = null;
     var small3 = null;
 
-    var lastUpdate = null;
     var isSleeping = false;
+    var lastUpdate = null;
+    var lastDateUpdate = null;
+    var bodyBat = 0;
+    var stress = 0;
+    var step = 0;
+    var sunset = 0;
+    var sunrise = 0;
+    var sunPosition = 0;
+    var battery = 0;
+    var batteryInDays = 0;
+    var stepGoal = 0;
+    var stepGoalPercentage = 0.0;
+    var calories = "";
+    var distance = "";
+    var heartRate = "";
+    var date = "";
+
+    var metricU = null;
+    var metricR = null;
+    var metricD = null;
+    var metricL = null;
+    var showSecondHand = null;
+    var backgroundColorPref = null;
+    var color1 = null;
+    var color2 = null;
+    var color3 = null;
+    var color4 = null;
+    var color5 = null;
+    var color6 = null;
 
     function initialize() {
         WatchFace.initialize();
@@ -63,12 +94,13 @@ class CosmographView extends WatchUi.WatchFace {
         ledFontBig = Application.loadResource( Rez.Fonts.id_led_big );
         ledFontStorre = Application.loadResource( Rez.Fonts.id_storre );
 
+        cacheProps();
         setColors();
     }
 
     function onSettingsChanged() {
         lastUpdate = null;
-        // cacheProps();
+        cacheProps();
         setColors();
         WatchUi.requestUpdate();
     }
@@ -77,18 +109,25 @@ class CosmographView extends WatchUi.WatchFace {
     // the state of this View and prepare it to be shown. This includes
     // loading resources into memory.
     function onShow() as Void {
+        updateDate();
     }
 
     // Update the view
     function onUpdate(dc as Dc) as Void {
-        dc.setColor(backgroundColor, backgroundColor);
-        dc.clear();
-        if (dc has :setAntiAlias ) { dc.setAntiAlias(true); }
-        
-        drawClockFace(dc);
-        drawProgressBars(dc);
-        drawMetrics(dc);
-        drawHands(dc);
+        var now = Time.now().value();
+        if(lastUpdate == null or now - lastUpdate > 60) {
+            lastUpdate = now;
+            updateMetrics();
+        }
+        if (isSleeping == false) {
+            dc.setColor(backgroundColor, backgroundColor);
+            dc.clear();
+            if (dc has :setAntiAlias ) { dc.setAntiAlias(true); }
+            drawClockFace(dc);
+            drawProgressBars(dc);
+            drawMetrics(dc);
+            drawHands(dc);
+        }
     }
 
     // Called when this View is removed from the screen. Save the
@@ -99,10 +138,16 @@ class CosmographView extends WatchUi.WatchFace {
 
     // The user has just looked at their watch. Timers and animations may be started here.
     function onExitSleep() as Void {
+        lastUpdate = null;
+        isSleeping = false;
+        cacheProps();
+        setColors();
+        WatchUi.requestUpdate();
     }
 
     // Terminate any active timers and prepare for slow updates.
     function onEnterSleep() as Void {
+        isSleeping = true;
     }
 
     /* -------- AUX FUNCTIONS -------- */
@@ -173,12 +218,12 @@ class CosmographView extends WatchUi.WatchFace {
         ];
 
         // Draw the progress bars
-        drawProgressBar(dc, coord[0][0], coord[0][1], 0, 100, 34, 2);
-        drawProgressBar(dc, coord[1][0], coord[1][1], 0, 100, 75, 0);
-        drawProgressBar(dc, coord[2][0], coord[2][1], 0, 100, 50, 3);
+        drawProgressBar(dc, coord[0][0], coord[0][1], getValueForCircleMetric(metricD), getTypeForCircleMetric(metricD));
+        drawProgressBar(dc, coord[1][0], coord[1][1], getValueForCircleMetric(metricL), getTypeForCircleMetric(metricL));
+        drawProgressBar(dc, coord[2][0], coord[2][1], getValueForCircleMetric(metricR), getTypeForCircleMetric(metricR));
     }
 
-    function drawProgressBar(dc, x, y, max, min, value, type) {
+    function drawProgressBar(dc, x, y, value, type) {
         // var outerCircleSize = isSmallScreen ? 53 : 63;
         var outerCircleSize = 53;
         // var innerCircleSize = isSmallScreen ? 37 : 53;
@@ -186,6 +231,8 @@ class CosmographView extends WatchUi.WatchFace {
         var needleLength = isSmallScreen ? 47 : 57;
         var counterNeedleLength = isSmallScreen ? 10 : 10;
         var needleColor = color1w0;
+        var max = getMaxForType(type);
+        var min = 0;
 
         dc.setColor(color1w5, Graphics.COLOR_TRANSPARENT);
         dc.fillCircle(x, y, outerCircleSize);
@@ -198,7 +245,7 @@ class CosmographView extends WatchUi.WatchFace {
         var range = max - min;
         var relativeValue = value - min;
         var percentage = relativeValue.toFloat() / range.toFloat();
-        var angle = Math.toRadians(270 - (percentage * 360)); // Start at 12 o'clock, clockwise
+        var angle = Math.toRadians((percentage * 360)) - rotationOffset; // Start at 12 o'clock, clockwise
 
         // Calculate the needle endpoint
         var needleEndX = x + needleLength * Math.cos(angle);
@@ -235,6 +282,7 @@ class CosmographView extends WatchUi.WatchFace {
         var xOffSet = 3;
         var x = centerX - xOffSet;
         var y = centerY - radiusOffSet;
+        var charSize = 24;
 
         // Backgrounds.
         dc.setColor(color1w10, Graphics.COLOR_TRANSPARENT);
@@ -242,11 +290,56 @@ class CosmographView extends WatchUi.WatchFace {
 
         // Values.
         dc.setColor(color1w0, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(x, y, ledFontBig, "11.2", Graphics.TEXT_JUSTIFY_CENTER);
+        dc.drawText(x+2*charSize, y, ledFontBig, getMetricUValue(), Graphics.TEXT_JUSTIFY_RIGHT);
 
         // Text.
         dc.setColor(color1w2, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(x, y-13, ledFontStorre, "KM TODAY:", Graphics.TEXT_JUSTIFY_CENTER);
+        dc.drawText(x, y-13, ledFontStorre, getMetricUText(), Graphics.TEXT_JUSTIFY_CENTER);
+    }
+
+    function updateMetrics() as Void {
+        if ((Toybox has :SensorHistory) && (Toybox.SensorHistory has :getBodyBatteryHistory) && (Toybox.SensorHistory has :getStressHistory)) {
+            var bbIterator = Toybox.SensorHistory.getBodyBatteryHistory({:period => 1});
+            var stIterator = Toybox.SensorHistory.getStressHistory({:period => 1});
+            var bb = bbIterator.next();
+            var st = stIterator.next();
+
+            if(bb != null) {
+                bodyBat = bb.data;
+            }
+            if(st != null) {
+                stress = st.data;
+            }
+        }
+        var monitorInfo = ActivityMonitor.getInfo();
+        var activityInfo = Activity.getActivityInfo();
+        step = monitorInfo.steps;
+        stepGoal = monitorInfo.stepGoal;
+        stepGoalPercentage = 100.0 * step / stepGoal;
+        calories = monitorInfo.calories.format("%04d");
+        var km = monitorInfo.distance / 100000.0; // km / day.
+        if (km >= 10) {
+            distance = km.format("%.1f");
+        } else {
+            distance = km.format("%.2f");
+        }
+        var hrSample = activityInfo.currentHeartRate;
+        if (hrSample != null) {
+            heartRate = hrSample.format("%04d");
+        } else if (ActivityMonitor has :getHeartRateHistory) {
+            // Falling back to historical HR from ActivityMonitor
+            var hist = ActivityMonitor.getHeartRateHistory(1, /* newestFirst */ true).next();
+            if ((hist != null) && (hist.heartRate != ActivityMonitor.INVALID_HR_SAMPLE)) {
+                heartRate = hist.heartRate.format("%04d");
+            }
+        }
+        battery = System.getSystemStats().battery;
+        batteryInDays = System.getSystemStats().batteryInDays;
+    }
+
+    function updateDate() as Void {
+        var today = Time.Gregorian.info(Time.now(), Time.FORMAT_SHORT);
+        date = today.day_of_week - 1;
     }
     
     /* -------- STATIC FUNCTIONS -------- */
@@ -259,5 +352,116 @@ class CosmographView extends WatchUi.WatchFace {
         color1w6 = Graphics.createColor(255, 170, 170, 170);
         color1w7 = Graphics.createColor(255, 155, 155, 155);
         color1w10 = Graphics.createColor(255, 55, 55, 55);
+    }
+    
+    function cacheProps() as Void {
+        metricU = Application.Properties.getValue("metricU");
+        metricR = Application.Properties.getValue("metricR");
+        metricD = Application.Properties.getValue("metricD");
+        metricL = Application.Properties.getValue("metricL");
+        showSecondHand = Application.Properties.getValue("showSecondHand");
+        backgroundColorPref = Application.Properties.getValue("backgroundColor");
+        color1 = Application.Properties.getValue("color1");
+        color2 = Application.Properties.getValue("color2");
+        color3 = Application.Properties.getValue("color3");
+        color4 = Application.Properties.getValue("color4");
+        color5 = Application.Properties.getValue("color5");
+        color6 = Application.Properties.getValue("color6");
+    }
+    
+    function day_name(day_of_week) {
+        var names = [
+            "SUN",
+            "MON",
+            "TUE",
+            "WED",
+            "THU",
+            "FRI",
+            "SAT",
+        ];
+        return names[day_of_week];
+    }
+
+    function getMetricUText() {
+        if (metricU == 0) {
+            return "KM TODAY:";
+        } else if (metricU == 1) {
+            return "DLY CALORIES:";
+        } else if (metricU == 2) {
+            return "LIVE HR:";
+        } else if (metricU == 3) {
+            return "BATTERY:";
+        } else if (metricU == 4) {
+            return "BATTERY:";
+        } else if (metricU == 5) {
+            return "BODY BATT:";
+        } else if (metricU == 6) {
+            return "DAY:";
+        }
+        return "KM TODAY:";
+    }
+
+    function getMetricUValue() {
+        if (metricU == 0) {
+            return distance;
+        } else if (metricU == 1) {
+            return calories;
+        } else if (metricU == 2) {
+            return heartRate;
+        } else if (metricU == 3) {
+            return battery.format("%.1f");
+        } else if (metricU == 4) {
+            return batteryInDays.format("%02d");
+        } else if (metricU == 5) {
+            return bodyBat.format("%.1f");
+        } else if (metricU == 6) {
+            return day_name(date);
+        }
+        return distance;
+    }
+
+    function getTypeForCircleMetric(metric) {
+        if (metric == 0) { // Heart Rate
+            return 3;
+        } else if (metric == 1) { // Week day
+            return 2;
+        } else if (metric == 2) { // Battery
+            return 0;
+        } else if (metric == 3) { // Body Battery
+            return 0;
+        } else if (metric == 4) { // Setp goal
+            return 0;
+        } else if (metric == 5) { // Stress
+            return 0;
+        }
+        return 3;
+    }
+
+    function getValueForCircleMetric(metric) {
+        if (metric == 0) { // Heart Rate
+            return heartRate.toNumber();
+        } else if (metric == 1) { // Week day
+            return date;
+        } else if (metric == 2) { // Battery
+            return battery;
+        } else if (metric == 3) { // Body Battery
+            return bodyBat;
+        } else if (metric == 4) { // Setp goal
+            return stepGoalPercentage;
+        } else if (metric == 5) { // Stress
+            return stress;
+        }
+        return heartRate.toNumber();
+    }
+
+    function getMaxForType(type) {
+        if (type == 3) { // Heart Rate
+            return 200;
+        } else if (type == 2) { // Week day
+            return 7;
+        } else if (type == 1) { // Battery
+            return 100;
+        }
+        return 100;
     }
 }
