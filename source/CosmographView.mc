@@ -14,13 +14,14 @@ class CosmographView extends WatchUi.WatchFace {
     var rotationOffset = Math.PI / 2.0; // Make 0 the top value instead of pi/2.
 
     var backgroundColor = null;
-    var palette1 = null;
-    var palette1alt = null;
-    var palette1dark = null;
-    var palette1darker = null;
-    var palette1light = null;
-    var palette2 = null;
-    var palette2dark = null;
+    var color1w0 = null;
+    var color1w2 = null;
+    var color1w5 = null;
+    var color1w6 = null;
+    var color1w7 = null;
+    var color1w10 = null;
+    var color2w1 = null;
+    var color2w10 = null;
 
     var isSmallScreen = null;
     var faceImage = null;
@@ -99,27 +100,31 @@ class CosmographView extends WatchUi.WatchFace {
         var minuteAngle = minutes * Math.PI / 30.0;
         var secondAngle = seconds * Math.PI / 30.0;
 
+        var hourColor = color1w2;
+        var minuteColor = color1w6;
+        var secondColor = color1w0;
+
         // Draw hour hand
-        dc.setColor(palette1, Graphics.COLOR_TRANSPARENT);
+        dc.setColor(hourColor, Graphics.COLOR_TRANSPARENT);
         dc.fillCircle(centerX, centerY, 12);
-        drawHand(dc, hourAngle, radius * 0.5, radius * 0.1, 12, palette1);
+        drawHand(dc, hourAngle, radius * 0.5, radius * 0.1, 12, hourColor);
         drawHand(dc, hourAngle, radius * 0.4, radius * 0.07, 6, backgroundColor);
-        drawHand(dc, hourAngle, radius * 0.08, 0, 12, palette1);
+        drawHand(dc, hourAngle, radius * 0.08, 0, 12, hourColor);
 
         // Draw minute hand
-        dc.setColor(palette1alt, Graphics.COLOR_TRANSPARENT);
+        dc.setColor(minuteColor, Graphics.COLOR_TRANSPARENT);
         dc.fillCircle(centerX, centerY, 9);
-        drawHand(dc, minuteAngle, radius * 0.6, radius * 0.1, 10, palette1alt);
+        drawHand(dc, minuteAngle, radius * 0.6, radius * 0.1, 10, minuteColor);
         drawHand(dc, minuteAngle, radius * 0.56, radius * 0.07, 4, backgroundColor);
-        drawHand(dc, minuteAngle, radius * 0.08, 0, 10, palette1alt);
+        drawHand(dc, minuteAngle, radius * 0.08, 0, 10, minuteColor);
         
         // Draw second hand
-        dc.setColor(palette1light, Graphics.COLOR_TRANSPARENT);
+        dc.setColor(secondColor, Graphics.COLOR_TRANSPARENT);
         dc.fillCircle(centerX, centerY, 5);
-        drawHand(dc, secondAngle, radius * 0.85, radius * 0.16, 3, palette1light);
+        drawHand(dc, secondAngle, radius * 0.85, radius * 0.16, 3, secondColor);
 
         // Small dark circle on top of needle.
-        dc.setColor(palette1dark, Graphics.COLOR_TRANSPARENT);
+        dc.setColor(color1w7, Graphics.COLOR_TRANSPARENT);
         dc.fillCircle(centerX, centerY, 1);
     }
 
@@ -157,9 +162,9 @@ class CosmographView extends WatchUi.WatchFace {
         var needleLength = isSmallScreen ? 47 : 57;
         var counterNeedleLength = isSmallScreen ? 10 : 10;
         var useAltColor = true;
-        var needleColor = useAltColor ? palette1light : palette2;
+        var needleColor = useAltColor ? color1w0 : color2w1;
 
-        dc.setColor(palette1alt, Graphics.COLOR_TRANSPARENT);
+        dc.setColor(color1w5, Graphics.COLOR_TRANSPARENT);
         dc.fillCircle(x, y, outerCircleSize);
         dc.setColor(backgroundColor, Graphics.COLOR_TRANSPARENT);
         dc.fillCircle(x, y, innerCircleSize);
@@ -184,7 +189,7 @@ class CosmographView extends WatchUi.WatchFace {
         dc.setPenWidth(3);
         dc.drawLine(x, y, counterNeedleEndX, counterNeedleEndY);
         dc.fillCircle(x, y, 3);
-        dc.setColor(palette1dark, Graphics.COLOR_TRANSPARENT);
+        dc.setColor(color1w7, Graphics.COLOR_TRANSPARENT);
         dc.fillCircle(x, y, 1);
     }
     
@@ -192,14 +197,15 @@ class CosmographView extends WatchUi.WatchFace {
     function setColors() as Void {
         backgroundColor = Graphics.COLOR_BLACK;
         
-        palette2 = Graphics.COLOR_RED;
-        palette2dark = Graphics.COLOR_DK_RED;
+        color2w1 = Graphics.COLOR_RED;
+        color2w10 = Graphics.COLOR_DK_RED;
        
         // White.
-        palette1 = Graphics.createColor(255, 225, 225, 225);
-        palette1alt = Graphics.createColor(255, 195, 195, 195);
-        palette1dark = Graphics.createColor(255, 155, 155, 155);
-        palette1darker = Graphics.createColor(255, 55, 55, 55);
-        palette1light = Graphics.COLOR_WHITE;
+        color1w0 = Graphics.COLOR_WHITE;
+        color1w2 = Graphics.createColor(255, 225, 225, 225);
+        color1w5 = Graphics.createColor(255, 195, 195, 195);
+        color1w6 = Graphics.createColor(255, 170, 170, 170);
+        color1w7 = Graphics.createColor(255, 155, 155, 155);
+        color1w10 = Graphics.createColor(255, 55, 55, 55);
     }
 }
