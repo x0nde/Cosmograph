@@ -91,10 +91,10 @@ class CosmographView extends WatchUi.WatchFace {
         dc.setColor(backgroundColor, backgroundColor);
         dc.clear();
         if (dc has :setAntiAlias ) { dc.setAntiAlias(true); }
-        drawClockFace(dc);
         
+        drawClockFace(dc);
         drawProgressBars(dc);
-
+        drawMetrics(dc);
         drawHands(dc);
     }
 
@@ -236,6 +236,25 @@ class CosmographView extends WatchUi.WatchFace {
         } else if (type == 3) {
             dc.drawBitmap(x-radius, y-radius, small3);
         }
+    }
+
+    function drawMetrics(dc) as Void {
+        var radiusOffSet = radius * 0.5;
+        var xOffSet = 3;
+        var x = centerX - xOffSet;
+        var y = centerY - radiusOffSet;
+
+        // Backgrounds.
+        dc.setColor(color1w10, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(x, y, ledFontBig, "####", Graphics.TEXT_JUSTIFY_CENTER);
+
+        // Values.
+        dc.setColor(color1w0, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(x, y, ledFontBig, "11.2", Graphics.TEXT_JUSTIFY_CENTER);
+
+        // Text.
+        dc.setColor(color1w2, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(x, y-13, ledFontStorre, "KM TODAY:", Graphics.TEXT_JUSTIFY_CENTER);
     }
     
     /* -------- STATIC FUNCTIONS -------- */
