@@ -1,0 +1,14 @@
+<properties>
+    <property id="metricU" type="number">0</property>
+    <property id="metricR" type="number">0</property>
+    <property id="metricD" type="number">0</property>
+    <property id="metricL" type="number">0</property>
+    <property id="showSecondHand" type="boolean">true</property>
+    <property id="backgroundColor" type="string"></property>
+    <property id="color1" type="string"></property>
+    <property id="color2" type="string"></property>
+    <property id="color3" type="string"></property>
+    <property id="color4" type="string"></property>
+    <property id="color5" type="string"></property>
+    <property id="color6" type="string"></property>
+</properties>

@@ -20,8 +20,6 @@ class CosmographView extends WatchUi.WatchFace {
     var color1w6 = null;
     var color1w7 = null;
     var color1w10 = null;
-    var color2w1 = null;
-    var color2w10 = null;
 
     var ledFontBig = null;
     var ledFontStorre = null;
@@ -32,6 +30,9 @@ class CosmographView extends WatchUi.WatchFace {
     var small1 = null;
     var small2 = null;
     var small3 = null;
+
+    var lastUpdate = null;
+    var isSleeping = false;
 
     function initialize() {
         WatchFace.initialize();
@@ -51,23 +52,25 @@ class CosmographView extends WatchUi.WatchFace {
         if (width <= 400) {
             isSmallScreen = true;
             faceImage = Application.loadResource(Rez.Drawables.face386);
-            small0 = Application.loadResource(Rez.Drawables.small_0);
-            small1 = Application.loadResource(Rez.Drawables.small_1);
-            small2 = Application.loadResource(Rez.Drawables.small_2);
-            small3 = Application.loadResource(Rez.Drawables.small_3);
         } else if (width <= 460) {
             isSmallScreen = false;
             faceImage = Application.loadResource(Rez.Drawables.face450);
-            small0 = Application.loadResource(Rez.Drawables.small_0);
-            small1 = Application.loadResource(Rez.Drawables.small_1);
-            small2 = Application.loadResource(Rez.Drawables.small_2);
-            small3 = Application.loadResource(Rez.Drawables.small_3);
         }
-
+        small0 = Application.loadResource(Rez.Drawables.small_0);
+        small1 = Application.loadResource(Rez.Drawables.small_1);
+        small2 = Application.loadResource(Rez.Drawables.small_2);
+        small3 = Application.loadResource(Rez.Drawables.small_3);
         ledFontBig = Application.loadResource( Rez.Fonts.id_led_big );
         ledFontStorre = Application.loadResource( Rez.Fonts.id_storre );
 
         setColors();
+    }
+
+    function onSettingsChanged() {
+        lastUpdate = null;
+        // cacheProps();
+        setColors();
+        WatchUi.requestUpdate();
     }
 
     // Called when this View is brought to the foreground. Restore
@@ -182,8 +185,7 @@ class CosmographView extends WatchUi.WatchFace {
         var innerCircleSize = 37;
         var needleLength = isSmallScreen ? 47 : 57;
         var counterNeedleLength = isSmallScreen ? 10 : 10;
-        var useAltColor = true;
-        var needleColor = useAltColor ? color1w0 : color2w1;
+        var needleColor = color1w0;
 
         dc.setColor(color1w5, Graphics.COLOR_TRANSPARENT);
         dc.fillCircle(x, y, outerCircleSize);
@@ -249,12 +251,8 @@ class CosmographView extends WatchUi.WatchFace {
     
     /* -------- STATIC FUNCTIONS -------- */
     function setColors() as Void {
+        // Default white theme.
         backgroundColor = Graphics.COLOR_BLACK;
-        
-        color2w1 = Graphics.COLOR_RED;
-        color2w10 = Graphics.COLOR_DK_RED;
-       
-        // White.
         color1w0 = Graphics.COLOR_WHITE;
         color1w2 = Graphics.createColor(255, 225, 225, 225);
         color1w5 = Graphics.createColor(255, 195, 195, 195);
