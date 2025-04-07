@@ -8,4 +8,5 @@
     <bitmap id="small_1" filename="small_1.png" />
     <bitmap id="small_2" filename="small_2.png" />
     <bitmap id="small_3" filename="small_3.png" />
+    <bitmap id="small_4" filename="small_4.png" />
 </drawables>

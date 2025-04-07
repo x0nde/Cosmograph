@@ -35,6 +35,7 @@ class CosmographView extends WatchUi.WatchFace {
     var small1 = null;
     var small2 = null;
     var small3 = null;
+    var small4 = null;
 
     var isSleeping = false;
     var lastUpdate = null;
@@ -94,6 +95,7 @@ class CosmographView extends WatchUi.WatchFace {
         small1 = Application.loadResource(Rez.Drawables.small_1);
         small2 = Application.loadResource(Rez.Drawables.small_2);
         small3 = Application.loadResource(Rez.Drawables.small_3);
+        small4 = Application.loadResource(Rez.Drawables.small_4);
         ledFontBig = Application.loadResource( Rez.Fonts.id_led_big );
         ledFontStorre = Application.loadResource( Rez.Fonts.id_storre );
 
@@ -279,6 +281,8 @@ class CosmographView extends WatchUi.WatchFace {
             dc.drawBitmap(x-radius, y-radius, small2);
         } else if (type == 3) {
             dc.drawBitmap(x-radius, y-radius, small3);
+        } else if (type == 4) {
+            dc.drawBitmap(x-radius, y-radius, small4);
         }
     }
 
@@ -486,17 +490,17 @@ class CosmographView extends WatchUi.WatchFace {
 
     function getTypeForCircleMetric(metric) {
         if (metric == 0) { // Heart Rate
-            return 3;
+            return 4;
         } else if (metric == 1) { // Week day
             return 2;
         } else if (metric == 2) { // Battery
-            return 0;
+            return 1;
         } else if (metric == 3) { // Body Battery
-            return 0;
+            return 1;
         } else if (metric == 4) { // Setp goal
-            return 0;
+            return 1;
         } else if (metric == 5) { // Stress
-            return 0;
+            return 1;
         }
         return 3;
     }
