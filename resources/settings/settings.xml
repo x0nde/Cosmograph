@@ -49,7 +49,7 @@
         <settingConfig type="boolean" />
     </setting>
 
-    <setting propertyKey="@Properties.removeCrown" title="Show crown icon at top">
+    <setting propertyKey="@Properties.showIcon" title="Show crown icon at top">
         <settingConfig type="boolean" />
     </setting>
 

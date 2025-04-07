@@ -59,7 +59,7 @@ class CosmographView extends WatchUi.WatchFace {
     var metricD = null;
     var metricL = null;
     var showSecondHand = null;
-    var removeCrown = null;
+    var showIcon = null;
     var backgroundColorPref = null;
     var color1 = null;
     var color2 = null;
@@ -189,9 +189,11 @@ class CosmographView extends WatchUi.WatchFace {
         drawHand(dc, minuteAngle, radius * 0.08, 0, 10, minuteColor);
         
         // Draw second hand
-        dc.setColor(secondColor, Graphics.COLOR_TRANSPARENT);
-        dc.fillCircle(centerX, centerY, 5);
-        drawHand(dc, secondAngle, radius * 0.85, radius * 0.16, 3, secondColor);
+        if (showSecondHand) {
+            dc.setColor(secondColor, Graphics.COLOR_TRANSPARENT);
+            dc.fillCircle(centerX, centerY, 5);
+            drawHand(dc, secondAngle, radius * 0.85, radius * 0.16, 3, secondColor);
+        }
 
         // Small dark circle on top of needle.
         dc.setColor(color1w7, Graphics.COLOR_TRANSPARENT);
@@ -404,7 +406,7 @@ class CosmographView extends WatchUi.WatchFace {
         metricD = Application.Properties.getValue("metricD");
         metricL = Application.Properties.getValue("metricL");
         showSecondHand = Application.Properties.getValue("showSecondHand");
-        removeCrown = Application.Properties.getValue("removeCrown");
+        showIcon = Application.Properties.getValue("showIcon");
         backgroundColorPref = Application.Properties.getValue("backgroundColor");
         color1 = Application.Properties.getValue("color1");
         color2 = Application.Properties.getValue("color2");
@@ -415,7 +417,7 @@ class CosmographView extends WatchUi.WatchFace {
         color7 = Application.Properties.getValue("color7");
         color8 = Application.Properties.getValue("color8");
 
-        if (removeCrown) {
+        if (!showIcon) {
             if (isSmallScreen) {
                 faceImage = Application.loadResource(Rez.Drawables.face386alt);
             } else {
