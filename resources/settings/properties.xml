@@ -5,7 +5,8 @@
     <property id="metricL" type="number">2</property>
     <property id="showSecondHand" type="boolean">true</property>
     <property id="showIcon" type="boolean">false</property>
-    <property id="backgroundColor" type="string"></property>
+    <property id="showSecondsCircle" type="boolean">false</property>
+    <property id="backgroundColor" type="string">5,5,30</property>
     <property id="color1" type="string"></property>
     <property id="color2" type="string"></property>
     <property id="color3" type="string"></property>

@@ -61,6 +61,7 @@ class CosmographView extends WatchUi.WatchFace {
     var metricL = null;
     var showSecondHand = null;
     var showIcon = null;
+    var showSecondsCircle = null;
     var backgroundColorPref = null;
     var color1 = null;
     var color2 = null;
@@ -411,6 +412,7 @@ class CosmographView extends WatchUi.WatchFace {
         metricL = Application.Properties.getValue("metricL");
         showSecondHand = Application.Properties.getValue("showSecondHand");
         showIcon = Application.Properties.getValue("showIcon");
+        showSecondsCircle = Application.Properties.getValue("showSecondsCircle");
         backgroundColorPref = Application.Properties.getValue("backgroundColor");
         color1 = Application.Properties.getValue("color1");
         color2 = Application.Properties.getValue("color2");
@@ -421,17 +423,26 @@ class CosmographView extends WatchUi.WatchFace {
         color7 = Application.Properties.getValue("color7");
         color8 = Application.Properties.getValue("color8");
 
-        if (!showIcon) {
-            if (isSmallScreen) {
-                faceImage = Application.loadResource(Rez.Drawables.face386alt);
+
+        if (isSmallScreen) {
+            if (showIcon && showSecondsCircle) {
+                faceImage = Application.loadResource(Rez.Drawables.face_386_icon_seconds);
+            } else if (showIcon && !showSecondsCircle) {
+                faceImage = Application.loadResource(Rez.Drawables.face_386_icon);
+            } else if (!showIcon && showSecondsCircle) {
+                faceImage = Application.loadResource(Rez.Drawables.face_386_seconds);
             } else {
-                faceImage = Application.loadResource(Rez.Drawables.face450alt);
+                faceImage = Application.loadResource(Rez.Drawables.face_386);
             }
         } else {
-            if (isSmallScreen) {
-                faceImage = Application.loadResource(Rez.Drawables.face386);
+            if (showIcon && showSecondsCircle) {
+                faceImage = Application.loadResource(Rez.Drawables.face_452_icon_seconds);
+            } else if (showIcon && !showSecondsCircle) {
+                faceImage = Application.loadResource(Rez.Drawables.face_452_icon);
+            } else if (!showIcon && showSecondsCircle) {
+                faceImage = Application.loadResource(Rez.Drawables.face_452_seconds);
             } else {
-                faceImage = Application.loadResource(Rez.Drawables.face450);
+                faceImage = Application.loadResource(Rez.Drawables.face_452);
             }
         }
 

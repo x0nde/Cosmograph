@@ -53,6 +53,10 @@
         <settingConfig type="boolean" />
     </setting>
 
+    <setting propertyKey="@Properties.showSecondsCircle" title="Show seconds number around watch face">
+        <settingConfig type="boolean" />
+    </setting>
+
     <setting propertyKey="@Properties.backgroundColor" title="Background Color RGB (ex: 255,255,255)">
         <settingConfig type="alphaNumeric" />
     </setting>
