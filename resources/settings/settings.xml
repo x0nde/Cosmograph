@@ -18,7 +18,7 @@
             <listEntry value="1">Week day</listEntry>
             <listEntry value="2">Battery</listEntry>
             <listEntry value="3">Body Battery</listEntry>
-            <listEntry value="4">Setp goal</listEntry>
+            <listEntry value="4">Step goal</listEntry>
             <listEntry value="5">Stress</listEntry>
         </settingConfig>
     </setting>
@@ -29,7 +29,7 @@
             <listEntry value="1">Week day</listEntry>
             <listEntry value="2">Battery</listEntry>
             <listEntry value="3">Body Battery</listEntry>
-            <listEntry value="4">Setp goal</listEntry>
+            <listEntry value="4">Step goal</listEntry>
             <listEntry value="5">Stress</listEntry>
         </settingConfig>
     </setting>
@@ -40,7 +40,7 @@
             <listEntry value="1">Week day</listEntry>
             <listEntry value="2">Battery</listEntry>
             <listEntry value="3">Body Battery</listEntry>
-            <listEntry value="4">Setp goal</listEntry>
+            <listEntry value="4">Step goal</listEntry>
             <listEntry value="5">Stress</listEntry>
         </settingConfig>
     </setting>
