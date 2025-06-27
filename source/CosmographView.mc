@@ -518,6 +518,9 @@ class CosmographView extends WatchUi.WatchFace {
 
     function getValueForCircleMetric(metric) {
         if (metric == 0) { // Heart Rate
+            if (heartRate.equals("")) {
+                return 0;
+            }
             return heartRate.toNumber();
         } else if (metric == 1) { // Week day
             return date;
